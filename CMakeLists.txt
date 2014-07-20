@@ -85,8 +85,8 @@ SET_TARGET_PROPERTIES(saga-lib PROPERTIES OUTPUT_NAME "saga")
 
 #add_executable( saga-tool tools/profiles.cc)
 #SET_TARGET_PROPERTIES(saga-tool PROPERTIES OUTPUT_NAME "profiles")
-#add_dependencies(saga-tool saga-lib) 
-#target_link_libraries (saga-tool saga-lib) 
+add_dependencies(saga-tool saga-lib) 
+target_link_libraries (saga-tool saga-lib) 
 
 INSTALL(TARGETS saga-tool RUNTIME DESTINATION bin)
 INSTALL(TARGETS saga-lib DESTINATION lib)
