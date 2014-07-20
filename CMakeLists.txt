@@ -83,10 +83,10 @@ include_directories (include)
 add_library( saga-lib src/AMRgrid.cc src/AMRcell.cc src/LocalProperties.cc src/SQLiteInterface.cc src/MagneticField.cc )
 SET_TARGET_PROPERTIES(saga-lib PROPERTIES OUTPUT_NAME "saga")
 
-add_executable( saga-tool tools/profiles.cc)
-SET_TARGET_PROPERTIES(saga-tool PROPERTIES OUTPUT_NAME "profiles")
-add_dependencies(saga-tool saga-lib) 
-target_link_libraries (saga-tool saga-lib) 
+#add_executable( saga-tool tools/profiles.cc)
+#SET_TARGET_PROPERTIES(saga-tool PROPERTIES OUTPUT_NAME "profiles")
+#add_dependencies(saga-tool saga-lib) 
+#target_link_libraries (saga-tool saga-lib) 
 
 INSTALL(TARGETS saga-tool RUNTIME DESTINATION bin)
 INSTALL(TARGETS saga-lib DESTINATION lib)
@@ -103,18 +103,18 @@ INSTALL(DIRECTORY include/ DESTINATION include FILES_MATCHING PATTERN "*.h")
 # ----------------------------------------------------------------------------
 # Testing (optional)
 # ----------------------------------------------------------------------------
-option(ENABLE_TESTING "Build unit tests" ON)
-if(ENABLE_TESTING)
-    enable_testing()
+#option(ENABLE_TESTING "Build unit tests" ON)
+#if(ENABLE_TESTING)
+#    enable_testing()
 #   add_executable( threads test/threads.cc )
 #   target_link_libraries( threads saga-lib )
-
-    add_executable( testMain test/main.cc )
-    target_link_libraries( testMain saga-lib )
-
-    ADD_TEST(threadsTest threads)
-    ADD_TEST(mainTest getField)
-endif()
+#
+#    add_executable( testMain test/main.cc )
+#    target_link_libraries( testMain saga-lib )
+#
+#    ADD_TEST(threadsTest threads)
+#    ADD_TEST(mainTest getField)
+#endif()
 
 # ----------------------------------------------------------------------------
 # Python (optional)
@@ -138,7 +138,6 @@ if(ENABLE_PYTHON)
 	install(FILES python/saga.i DESTINATION share/saga)
 
 endif()
-
 
 
 
