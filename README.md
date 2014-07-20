@@ -1,7 +1,9 @@
 SAGA
 
 author: Rafael Alves Batista
+
 email: rafael.alves.batista [at] desy.de
+
 first public release: 20/07/2014
 
 
@@ -21,6 +23,6 @@ CRPropa: https://github.com/CRPropa/CRPropa3
 RAMSES: http://magnet.ens.fr/?ramses-mhd
 
 
-* This code is still being tested. I do not assume responsability for anything. 
+This code is still being tested. I do not assume responsability for anything. 
 I recommend a thorough test of this code before publishing any scientific results
 obtained from it.
