@@ -12,50 +12,7 @@ IF(APPLE)
     message(STATUS "Flags for Mac OS added " )
 ENDIF(APPLE)
 
-# ----------------------------------------------------------------------------
-# ROOT
-# ---------------------------------------------------------------------------- 
 
-# ROOT (optional for ROOT output)
-option(ENABLE_ROOT "ROOT Output" ON)
-    find_program(ROOT_CONFIG_EXECUTABLE root-config PATHS $ENV{ROOTSYS}/bin)
-    if(NOT ROOT_CONFIG_EXECUTABLE)
-        set(ROOT_FOUND FALSE)
-        MESSAGE(STATUS "ROOT: NOT Found!")    
-    else()    
-        set(ROOT_FOUND TRUE)
-        execute_process(COMMAND ${ROOT_CONFIG_EXECUTABLE} "--cflags" OUTPUT_VARIABLE ROOT_CFLAGS OUTPUT_STRIP_TRAILING_WHITESPACE)
-        execute_process(COMMAND ${ROOT_CONFIG_EXECUTABLE} "--libs" OUTPUT_VARIABLE ROOT_LIBS OUTPUT_STRIP_TRAILING_WHITESPACE)
-        message(STATUS "ROOT: Found!")
-        message(STATUS "  CFlags:      " ${ROOT_CFLAGS})
-        message(STATUS "  Libs:        " ${ROOT_LIBS})
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${ROOT_CFLAGS}")
-        set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${ROOT_LIBS}")
-            set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} ${ROOT_LIBS}")
-            set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${ROOT_LIBS}")
-            add_definitions(-DSAGA_HAVE_ROOT)
-            list(APPEND SAGA_SWIG_DEFINES -DSAGA_HAVE_ROOT)
-
-     endif()
-
-
-
-if(ENABLE_ROOT)
-    find_program(ROOT_CONFIG_EXECUTABLE root-config PATHS $ENV{ROOTSYS}/bin)
-
-    find_path(ROOT_INCLUDE_PATH sqlite3.h)
-    find_path(ROOT_LIBRARY_PATH libsqlite3)
-    find_library(ROOT_LIBRARY libsqlite3)
-    include_directories(${ROOT_INCLUDE_PATH})
-    if(ROOT_FOUND)
-            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${ROOT_CFLAGS}")
-            set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${ROOT_LIBS}")
-            set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} ${ROOT_LIBS}")
-            set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${ROOT_LIBS}")
-            add_definitions(-DCRPROPA_HAVE_ROOT)
-            list(APPEND SAGA_SWIG_DEFINES -DSAGA_HAVE_ROOT)
-    endif(ROOT_FOUND)
-endif(ENABLE_ROOT)
 
 # ----------------------------------------------------------------------------
 # SQLite3
