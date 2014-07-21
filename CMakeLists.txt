@@ -39,22 +39,16 @@ endif(SQLITE3_INCLUDE_PATH AND SQLITE3_LIBRARY)
 include_directories (include)
 
 add_library( saga-lib src/AMRgrid.cc src/AMRcell.cc src/LocalProperties.cc src/SQLiteInterface.cc src/MagneticField.cc )
-SET_TARGET_PROPERTIES(saga-lib PROPERTIES OUTPUT_NAME "saga")
+set_target_properties(saga-lib PROPERTIES OUTPUT_NAME "saga")
 
-#add_executable( saga-tool tools/profiles.cc)
-#SET_TARGET_PROPERTIES(saga-tool PROPERTIES OUTPUT_NAME "profiles")
-#add_dependencies(saga-lib saga-tools) 
-#target_link_libraries (saga-lib saga-tools) 
-
-#INSTALL(TARGETS saga-tool RUNTIME DESTINATION bin)
 INSTALL(TARGETS saga-lib DESTINATION lib)
 INSTALL(DIRECTORY include/ DESTINATION include FILES_MATCHING PATTERN "*.h")
 
-SET(SAGA_PREFIX ${CMAKE_INSTALL_PREFIX})
-SET(SAGA_LIBRARY ${CMAKE_INSTALL_PREFIX}/lib/libSAGA.a)
+set(SAGA_PREFIX ${CMAKE_INSTALL_PREFIX})
+set(SAGA_LIBRARY ${CMAKE_INSTALL_PREFIX}/lib/libSAGA.a)
 
-SET(SAGA_PREFIX ${CMAKE_SOURCE_DIR})
-SET(SAGA_LIBRARY ${CMAKE_BINARY_DIR}/libSAGA.a)
+set(SAGA_PREFIX ${CMAKE_SOURCE_DIR})
+set(SAGA_LIBRARY ${CMAKE_BINARY_DIR}/libSAGA.a)
 
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
@@ -64,12 +58,9 @@ file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 option(ENABLE_TESTING "Build unit tests" ON)
 if(ENABLE_TESTING)
     enable_testing()
-
     add_executable( testMain test/mainTest.cc )
     target_link_libraries( testMain saga-lib )
-
-    #ADD_TEST(threadsTest threads)
-    ADD_TEST(mainTest testMain)
+    add_test(mainTest testMain)
 endif(ENABLE_TESTING)
 
 # ----------------------------------------------------------------------------
