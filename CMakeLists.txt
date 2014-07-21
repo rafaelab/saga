@@ -2,9 +2,9 @@ cmake_minimum_required(VERSION 2.6)
 
 if(CMAKE_COMPILER_IS_GNUCC)
     if(ENABLE_OPENMP)
-	   SET(CMAKE_CXX_FLAGS "-fPIC -D_FILE_OFFSET_BITS=64 -O3 -fopenmp ${CMAKE_CXX_FLAGS}")
+	   set(CMAKE_CXX_FLAGS "-fPIC -D_FILE_OFFSET_BITS=64 -O3 -fopenmp ${CMAKE_CXX_FLAGS}")
     else(ENABLE_OPENMP)
-        SET(CMAKE_CXX_FLAGS "-fPIC -D_FILE_OFFSET_BITS=64 -O3 ${CMAKE_CXX_FLAGS}")
+        set(CMAKE_CXX_FLAGS "-fPIC -D_FILE_OFFSET_BITS=64 -O3 ${CMAKE_CXX_FLAGS}")
     endif(ENABLE_OPENMP)
 endif(CMAKE_COMPILER_IS_GNUCC)
 
@@ -41,8 +41,8 @@ include_directories (include)
 add_library( saga-lib src/AMRgrid.cc src/AMRcell.cc src/LocalProperties.cc src/SQLiteInterface.cc src/MagneticField.cc )
 set_target_properties(saga-lib PROPERTIES OUTPUT_NAME "saga")
 
-INSTALL(TARGETS saga-lib DESTINATION lib)
-INSTALL(DIRECTORY include/ DESTINATION include FILES_MATCHING PATTERN "*.h")
+install(TARGETS saga-lib DESTINATION lib)
+install(DIRECTORY include/ DESTINATION include FILES_MATCHING PATTERN "*.h")
 
 set(SAGA_PREFIX ${CMAKE_INSTALL_PREFIX})
 set(SAGA_LIBRARY ${CMAKE_INSTALL_PREFIX}/lib/libSAGA.a)
