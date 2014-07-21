@@ -1,13 +1,8 @@
 #include "saga/MagneticField.h"
 
-#include <stdint.h>
-#include <stdlib.h>
-#include <sys/time.h>
-#include <omp.h>
+
 
 namespace saga {
-
-
 
 /*********************************************************************************************************/ 
 // Constructor Magnetic Field
