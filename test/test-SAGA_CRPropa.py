@@ -2,40 +2,39 @@ import math
 import os
 import sys
 
-from crpropa import *
+from crpropa3 import *
 import saga
 
 A=1
 Z=1
-N=1100
+N=1
 
 convLength=8.57251e+24 # m
 convDensity=2.49651e-27 # kg/m3
 convMagneticField=1.11868099322e-09 # Tesla
 
 
-file='DB.sql'
-magF = saga.MagneticField(saga.AMRgrid(file,18))
+file='/Users/rafaelab/Simulations/output_00083.sql'
+magF = saga.MagneticField(saga.AMRgrid(file, 10))
 bField = AMRMagneticField(magF, convLength, convDensity, convMagneticField)
 
 # source and observer parameters
-radius=1.*Mpc
+radius=100.*Mpc
 origin=Vector3d(50.,50.,50.)*Mpc
-direction=Vector3d(-1,0,0)
 position=Vector3d(60,50,50)*Mpc
 source = Source()
 source.addProperty(SourcePosition(position))
-source.addProperty(SourceDirection(direction))
+source.addProperty(SourceIsotropicEmission())
 
 # module setup
 m = ModuleList()
 m.add(DeflectionCK(bField,1e-2,100*kpc,1*Mpc))
-m.add(SmallObserverSphere(origin,radius,'Detected','',True))
+m.add(LargeObserverSphere(origin,radius,'Detected','',True))
 m.add(ConditionalOutput('TEST-output.txt','Detected'))
 m.add(PeriodicBox(origin,Vector3d(200*Mpc)))
 
 # spectrum and composition
-minRigidity=100.*EeV
+minRigidity=1.*EeV
 maxRigidity=1000*EeV
 spectralIndex=-1.
 composition=SourceComposition(minRigidity,maxRigidity,spectralIndex)

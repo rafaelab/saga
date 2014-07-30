@@ -2,15 +2,15 @@ cmake_minimum_required(VERSION 2.6)
 
 if(CMAKE_COMPILER_IS_GNUCC)
     if(ENABLE_OPENMP)
-	   set(CMAKE_CXX_FLAGS "-fPIC -D_FILE_OFFSET_BITS=64 -O3 -fopenmp ${CMAKE_CXX_FLAGS}")
+	   set(CMAKE_CXX_FLAGS " -O3 -fopenmp ${CMAKE_CXX_FLAGS}")
     else(ENABLE_OPENMP)
-        set(CMAKE_CXX_FLAGS "-fPIC -D_FILE_OFFSET_BITS=64 -O3 ${CMAKE_CXX_FLAGS}")
+        set(CMAKE_CXX_FLAGS " -O3 ${CMAKE_CXX_FLAGS}")
     endif(ENABLE_OPENMP)
 endif(CMAKE_COMPILER_IS_GNUCC)
 
 
 if(APPLE)
-    set( CMAKE_CXX_FLAGS " -m64 -lsqlite3 -flat_namespace -undefined suppress ${CMAKE_CXX_FLAGS}" )
+    set( CMAKE_CXX_FLAGS " -lsqlite3 -flat_namespace -undefined suppress ${CMAKE_CXX_FLAGS}" )
     message(STATUS "Flags for Mac OS added " )
 endif(APPLE)
 
@@ -38,14 +38,14 @@ endif(SQLITE3_INCLUDE_PATH AND SQLITE3_LIBRARY)
 # ----------------------------------------------------------------------------
 include_directories (include)
 
-add_library( saga-lib src/AMRgrid.cc src/AMRcell.cc src/LocalProperties.cc src/SQLiteInterface.cc src/MagneticField.cc )
+add_library( saga-lib SHARED src/AMRgrid.cc src/AMRcell.cc src/LocalProperties.cc src/SQLiteInterface.cc src/MagneticField.cc )
 set_target_properties(saga-lib PROPERTIES OUTPUT_NAME "saga")
 
 install(TARGETS saga-lib DESTINATION lib)
 install(DIRECTORY include/ DESTINATION include FILES_MATCHING PATTERN "*.h")
 
 set(SAGA_PREFIX ${CMAKE_INSTALL_PREFIX})
-set(SAGA_LIBRARY ${CMAKE_INSTALL_PREFIX}/lib/libSAGA.a)
+set(SAGA_LIBRARY ${CMAKE_INSTALL_PREFIX}/lib/libsaga.a)
 
 set(SAGA_PREFIX ${CMAKE_SOURCE_DIR})
 set(SAGA_LIBRARY ${CMAKE_BINARY_DIR}/libSAGA.a)
