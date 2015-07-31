@@ -18,10 +18,10 @@ MagneticField::~MagneticField()
 }
 
 /*********************************************************************************************************/ 
-// Get denisty
+// Get density
 double MagneticField::getDensity(double x, double y, double z) const
 {
-    LocalProperties lp = TheGrid->getLocalProperties(x,y,z);
+    LocalProperties lp = TheGrid->getLocalProperties(x, y, z);
 	return lp.getDensity();
 }
 
