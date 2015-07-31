@@ -16,7 +16,6 @@ Creates uniform grids (binary files) containing the magnetic field and the
 
 void Usage(std::string name)
 {
-    std::cout << "Running tests." << std::endl;
     std::cout << "USAGE" << std::endl;
     std::cout << "./" << name << " <path_to_SQL_file> <output_binary_file_Bfield> <output_binary_file_density> <size_of_grid> <conversion_factor_B> <conversion_factor_rho>" <<  std::endl;    
     std::cout << "  arg 1: path to SQL file containing the magnetic field and density" << std::endl;
