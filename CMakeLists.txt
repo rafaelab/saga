@@ -55,11 +55,9 @@ include_directories(${SQLITE3_INCLUDE_PATH})
 # SAGA
 # ----------------------------------------------------------------------------
 include_directories(include)
-
 add_library(saga-lib SHARED src/AMRgrid.cc src/AMRcell.cc src/LocalProperties.cc src/SQLiteInterface.cc src/MagneticField.cc)
 target_link_libraries(saga-lib ${SQLITE3_LIBRARY})
 set_target_properties(saga-lib PROPERTIES OUTPUT_NAME "saga")
-
 
 install(TARGETS saga-lib DESTINATION lib)
 install(DIRECTORY include/ DESTINATION include FILES_MATCHING PATTERN "*.h")
@@ -72,6 +70,20 @@ set(SAGA_LIBRARY ${CMAKE_BINARY_DIR}/libSAGA.a)
 
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
+
+# ----------------------------------------------------------------------------
+# Useful tools
+# ----------------------------------------------------------------------------
+
+add_executable(SampleUniformGrid utilities/SampleUniformGrid.cpp)
+target_link_libraries(SampleUniformGrid saga-lib)
+
+add_executable(GetListOfSources utilities/GetListOfSources.cpp)
+target_link_libraries(GetListOfSources saga-lib)
+
+add_executable(GetListOfSources2 utilities/GetListOfSources2.cpp)
+target_link_libraries(GetListOfSources2 saga-lib)
+
 # ----------------------------------------------------------------------------
 # Testing (optional)
 # ----------------------------------------------------------------------------
@@ -80,8 +92,9 @@ if(ENABLE_TESTING)
     enable_testing()
     add_executable(testMain test/mainTest.cc)
     target_link_libraries(testMain saga-lib)
-    add_test(mainTest testMain)
+    add_test(testMain testMain)
 endif(ENABLE_TESTING)
+
 
 # ----------------------------------------------------------------------------
 # Python (optional)
