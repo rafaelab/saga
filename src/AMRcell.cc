@@ -177,7 +177,7 @@ double AMRcell::getZcenter()
 }    
 
 /*********************************************************************************************************/ 
-// Returns the coordinates (x,y,z) of the center of the cell
+// Returns the distance between the center of a cell and a point.
 // 
 double AMRcell::distanceToPoint(double x, double y, double z)
 {
