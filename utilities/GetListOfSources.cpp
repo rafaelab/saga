@@ -1,6 +1,8 @@
 /*
 Creates a text file containing a list of "sources".
 Sources are defined as regions with density higher than rho0.
+This approach considers all cells, which may be biased due to the
+ non uniformity of the grid. See GetListOfSources2 for another approach.
 */
 
 #include <iostream>
@@ -16,7 +18,6 @@ Sources are defined as regions with density higher than rho0.
 
 void Usage(std::string name)
 {
-    std::cout << "Running tests." << std::endl;
     std::cout << "USAGE" << std::endl;
     std::cout << "./" << name << " <path_to_SQL_file> arg.... " <<  std::endl;    
     std::cout << "  arg 1: path to SQL file containing the magnetic field and density" << std::endl;
@@ -56,18 +57,15 @@ int main(int argc, char** argv )
 
     int nCells = amr->getGridSize();
     std::cout << "Number of cells: " << nCells << std::endl;
-    for(int i=1; i<nCells; i++) {
+    for (int i=1; i<nCells; i++) {
         saga::AMRcell cell = amr->getCellWithIndex(i);
-        double x = (cell.getXcenter() + x0) * cl;
-        double y = (cell.getYcenter() + y0) * cl;
-        double z = (cell.getZcenter() + z0) * cl;
+        double x = cell.getXcenter() * cl + x0;
+        double y = cell.getYcenter() * cl + y0;
+        double z = cell.getZcenter() * cl + z0;
         // std::cout << i << " " << x << " " << y << " " << z << std::endl;
         saga::LocalProperties lp = amr->getLocalPropertiesFromIndex(i);
         double rho = lp.getDensity() * crho;
-        if (rho > rho0) {
-            // std::cout << i << "\t" << rho/rho0 << "\t" << x << "\t" << y << "\t" << z << std::endl;
-            fout << x << "\t" << y << "\t" << z << std::endl;
-        }
+        if (rho > rho0) fout << x << "\t" << y << "\t" << z << std::endl;
     }
 
     fout.close();
