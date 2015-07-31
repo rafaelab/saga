@@ -12,10 +12,10 @@ using namespace saga;
 
 
 // Unit conversion factors
-const double convLength=8.57599e+24; // m
-const double convDensity=2.49651e-27;  // kg/m^3
-const double convMagneticField=1.11754673542e-09; // T
-const double Mpc=3.08567758e22; // SI to Mpc
+const double convLength = 8.57599e+24; // m
+const double convDensity = 2.49651e-27;  // kg/m^3
+const double convMagneticField = 1.11754673542e-09; // T
+const double Mpc = 3.08567758e22; // SI to Mpc
 
 void testGetCellsRegion(saga::ref_ptr<saga::AMRgrid> amr, int nRegions)
 {
@@ -158,7 +158,5 @@ int main(int argc, char** argv )
     testGetLocalProperties(amr, nRegions);
     testGetLocalPropertiesFromIndex(amr);
 
-    
     return 0;
-
 }
