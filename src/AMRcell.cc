@@ -14,8 +14,8 @@ AMRcell::AMRcell(int cellIdx, double xmin, double xmax, double ymin, double ymax
     setYmax(ymax);
     setZmax(zmax);
     setCellIndex(cellIdx);
-    setCellCenter(xmin+(xmax-xmin)/2, ymin+(ymax-ymin)/2, zmin+(zmax-zmin)/2);
-    setCellSize(xmin-xmax);
+    setCellCenter(xmin + (xmax - xmin) / 2, ymin + (ymax - ymin) / 2, zmin + (zmax - zmin) / 2);
+    setCellSize(xmin - xmax);
 }
 
 AMRcell::AMRcell(double size, double xcenter, double ycenter, double zcenter, int cellIdx )
@@ -23,12 +23,12 @@ AMRcell::AMRcell(double size, double xcenter, double ycenter, double zcenter, in
     setCellIndex(cellIdx);
     setCellCenter(xcenter, ycenter, zcenter);
     setCellSize(size);
-    setXmin(Xcenter-size/2);
-    setYmin(Ycenter-size/2);
-    setZmin(Zcenter-size/2);
-    setXmax(Xcenter+size/2);
-    setYmax(Ycenter+size/2);
-    setZmax(Zcenter+size/2);
+    setXmin(Xcenter - size / 2);
+    setYmin(Ycenter - size / 2);
+    setZmin(Zcenter - size / 2);
+    setXmax(Xcenter + size / 2);
+    setYmax(Ycenter + size / 2);
+    setZmax(Zcenter + size / 2);
 }
 
 
@@ -181,7 +181,7 @@ double AMRcell::getZcenter()
 // 
 double AMRcell::distanceToPoint(double x, double y, double z)
 {
-    return sqrt( pow((Xcenter-x),2.) + pow((Ycenter-y),2.) + pow((Zcenter-z),2.) );
+    return sqrt(pow(Xcenter - x, 2) + pow(Ycenter - y, 2) + pow(Zcenter - z, 2));
 }
 
 }
