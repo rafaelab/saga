@@ -1,11 +1,11 @@
+#include <cstdlib>
+
 #include "saga/SQLiteInterface.h"
 
 
 namespace saga{
 
-/* For CRPropa usage should be 1. Otherwise can be set manually for better reads of the table. */
-const int maxNumThreads=1; 
-
+const int maxNumThreads = 256;
 int threadID;
 sqlite3 *dbarr[maxNumThreads];    
 sqlite3 *dbsing;    
@@ -28,15 +28,16 @@ SQLiteDB::SQLiteDB()
 {
 
     #ifndef _OPENMP 
-        std::cout << "SAGA will run *WITHOUT* OpenMP. Recompile the code including the option." << std::endl;
-        std::cout << "We strongly advise you to enable this option to avoid problems with CRPropa." << std::endl;
+        std::cout << "SAGA is running without OpenMP. Recompile the code including this option for better performance." << std::endl;
     #else
-        omp_set_num_threads(maxNumThreads);
-        std::cout << "SAGA will run with OpenMP." << std::endl;
-        std::cout << maxNumThreads << " threads will be used" << std::endl;
+        // int n = omp_get_num_threads();
+        int n = atoi(getenv("OMP_NUM_THREADS"));
+        if (n != maxNumThreads)
+            omp_set_num_threads(n);
+        std::cout << "SAGA is running with OpenMP. Number of threads: " << n << " ." << std::endl;
     #endif
-    
-    sqlite3_enable_shared_cache(1);
+
+    sqlite3_enable_shared_cache(1); 
 
 }
 
@@ -61,11 +62,13 @@ bool SQLiteDB::open(std::string filename)
         {
             threadID = omp_get_thread_num();
             fileRet = sqlite3_open_v2(filename.c_str(), &dbarr[threadID], SQLITE_OPEN_READONLY | SQLITE_OPEN_NOMUTEX, NULL);
+        
+            // printf("id %i / tot %i\n", threadID+1, omp_get_num_threads());
         }
     #endif
            // std::cout << "threadID " << threadID << std::endl;
 
-    if(fileRet==0) {
+    if(fileRet == 0) {
         std::cout << "Database successfully opened." << std::endl;
         return true;
     }
@@ -159,6 +162,7 @@ std::vector<std::vector<std::string> > SQLiteDB::query(char* queryString)
                 }
             }
             sqlite3_finalize(statement);
+            // std::cout << "query: " << queryString << " at thread " << threadID << std::endl;
         }
         std::string error = sqlite3_errmsg(dbarr[threadID]);
     #endif
