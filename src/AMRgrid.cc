@@ -127,6 +127,28 @@ AMRcell AMRgrid::selectNearestNeighbor(double x, double y, double z)
 }
 
 
+/*********************************************************************************************************/ 
+// Given a point with index idx, returns the cell with its properties .
+// Input:
+//   idx: index
+// Output:
+//   cell: cell with information.
+//
+AMRcell AMRgrid::getCellWithIndex(int idx)
+{
+    char query[512];
+    sprintf(query,"SELECT * FROM Cell_tree WHERE id = %i LIMIT 1;", idx);
+    std::vector<std::vector<std::string> > queryResults = DB->query(query);
+    // std::cout << queryResults[0][6] << std::endl;
+    double xmin = atof(queryResults[0][1].c_str());
+    double xmax = atof(queryResults[0][2].c_str());
+    double ymin = atof(queryResults[0][3].c_str());
+    double ymax = atof(queryResults[0][4].c_str());
+    double zmin = atof(queryResults[0][5].c_str());
+    double zmax = atof(queryResults[0][6].c_str());
+    
+    return AMRcell(idx, xmin, xmax, ymin, ymax, zmin, zmax);
+}
 
 /*********************************************************************************************************/ 
 // Given a range in space returns a vector with the local properties for the points.

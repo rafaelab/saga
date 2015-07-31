@@ -34,6 +34,7 @@ public:
     std::vector<AMRcell> getCellsRegion(double xmin, double xmax, double ymin, double ymax, double zmin, double zmax);
     std::vector<AMRcell> getNearestNeighbors(double x, double y, double z);
     AMRcell selectNearestNeighbor(double x, double y, double z);
+    AMRcell getCellWithIndex(int idx);
     std::vector<LocalProperties> getLocalPropertiesRegion(double xmin, double xmax, double ymin, double ymax, double zmin, double zmax);
     LocalProperties getLocalProperties(double x, double y, double z);
     LocalProperties getLocalPropertiesFromIndex(int idx);
