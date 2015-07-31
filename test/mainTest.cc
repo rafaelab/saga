@@ -7,15 +7,6 @@
 #include "saga/MagneticField.h"
 #include "saga/SQLiteInterface.h"
 #include "saga/Referenced.h"
-using namespace std;
-using namespace saga;
-
-
-// Unit conversion factors
-const double convLength = 8.57599e+24; // m
-const double convDensity = 2.49651e-27;  // kg/m^3
-const double convMagneticField = 1.11754673542e-09; // T
-const double Mpc = 3.08567758e22; // SI to Mpc
 
 void testGetCellsRegion(saga::ref_ptr<saga::AMRgrid> amr, int nRegions)
 {
@@ -138,21 +129,12 @@ int main(int argc, char** argv )
     }
     std::string filename = argv[1];
 
-    // position of interest in Mpc
-    double Mpc=3.08567758e22;
-    double x=13.*Mpc;
-    double y=23.*Mpc;
-    double z=17.*Mpc;
-    x/=convLength;
-    y/=convLength;
-    z/=convLength;
-
     const int nRegions = 3;
 
-    saga::ref_ptr<saga::AMRgrid> amr = new saga::AMRgrid(filename, 18);
+    saga::ref_ptr<saga::AMRgrid> amr = new saga::AMRgrid(filename, 10);
 
     testGetCellsRegion(amr, nRegions);
-    testGetNearestNeighbors(amr,nRegions);
+    testGetNearestNeighbors(amr, nRegions);
     testSelectNearestNeighbor(amr, nRegions);
     testGetLocalPropertiesRegion(amr, nRegions);
     testGetLocalProperties(amr, nRegions);
