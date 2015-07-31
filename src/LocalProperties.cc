@@ -8,10 +8,10 @@ namespace saga{
 // Constructor
 LocalProperties::LocalProperties(double rho, double Bx, double By, double Bz)
 {
-    LocalDensity=rho;
-    LocalMagneticFieldX=Bx;
-    LocalMagneticFieldY=By;
-    LocalMagneticFieldZ=Bz;
+    LocalDensity = rho;
+    LocalMagneticFieldX = Bx;
+    LocalMagneticFieldY = By;
+    LocalMagneticFieldZ = Bz;
 }
 LocalProperties::LocalProperties()
 {
@@ -30,7 +30,7 @@ LocalProperties::~LocalProperties()
 // 
 void LocalProperties::setDensity(double rho)
 {
-    LocalDensity=rho;
+    LocalDensity = rho;
 }
 
 /*********************************************************************************************************/ 
@@ -40,7 +40,7 @@ void LocalProperties::setDensity(double rho)
 // 
 void LocalProperties::setBx(double Bx)
 {
-    LocalMagneticFieldX=Bx;
+    LocalMagneticFieldX = Bx;
 }
 
 /*********************************************************************************************************/
@@ -50,7 +50,7 @@ void LocalProperties::setBx(double Bx)
 //  
 void LocalProperties::setBy(double By)
 {
-    LocalMagneticFieldY=By;
+    LocalMagneticFieldY = By;
 }
 
 /*********************************************************************************************************/ 
@@ -60,7 +60,7 @@ void LocalProperties::setBy(double By)
 // 
 void LocalProperties::setBz(double Bz)
 {
-    LocalMagneticFieldZ=Bz;
+    LocalMagneticFieldZ = Bz;
 }
 
 /*********************************************************************************************************/ 
@@ -110,7 +110,7 @@ double LocalProperties::getBz()
 // 
 double LocalProperties::getBtot()
 {
-    return sqrt(pow(LocalMagneticFieldX,2)+pow(LocalMagneticFieldY,2)+pow(LocalMagneticFieldZ,2));
+    return sqrt(pow(LocalMagneticFieldX, 2) + pow(LocalMagneticFieldY, 2) + pow(LocalMagneticFieldZ, 2));
 }
 
 
