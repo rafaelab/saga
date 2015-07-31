@@ -58,12 +58,12 @@ int main(int argc, char** argv )
 
     std::cout << "Number of sampled points: " << N << "^3." << std::endl;
 
-    for(int i=1; i<N; i++) {
-        for(int j=1; j<N; j++) {
-            for(int k=1; k<N; k++) {
-                double x = ((double)i ) / N;
-                double y = ((double)j ) / N;
-                double z = ((double)k ) / N;
+    for (int i=0; i<N; i++) {
+        for (int j=0; j<N; j++) {
+            for (int k=0; k<N; k++) {
+                double x = ((double)i + 0.5) / N;
+                double y = ((double)j + 0.5) / N;
+                double z = ((double)k + 0.5) / N;
                 saga::LocalProperties lp = amr->getLocalProperties(x, y, z);
                 double rho = lp.getDensity() * crho;
                 x = x * cl + x0;
