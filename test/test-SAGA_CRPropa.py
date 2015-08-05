@@ -2,49 +2,54 @@ import math
 import os
 import sys
 
-from crpropa3 import *
+from crpropa import *
 import saga
 
-A=1
-Z=1
-N=1
 
-convLength=8.57251e+24 # m
-convDensity=2.49651e-27 # kg/m3
-convMagneticField=1.11868099322e-09 # Tesla
+N = 3
+
+convLength = 8.57251e+24 # m
+convDensity = 2.49651e-27 # kg/m3
+convMagneticField = 1.11868099322e-09 # Tesla
+
+convMagneticField *= 1e1 # scaling to get physical values
 
 
-file='/Users/rafaelab/Simulations/output_00083.sql'
-magF = saga.MagneticField(saga.AMRgrid(file, 10))
+fn = '/home/rafaelab/Work/Simulations/LSS/output_00083.sql'
+magF = saga.MagneticField(saga.AMRgrid(fn, 10))
 bField = AMRMagneticField(magF, convLength, convDensity, convMagneticField)
+boxOrigin = Vector3d(0, 0, 0)
+boxSize = Vector3d(convLength, convLength, convLength) 
+
+#observer
+obsPosition = boxSize * 0.5
+obsSize = convLength / 2.
+obs = Observer()
+obs.add(ObserverLargeSphere(obsPosition, obsSize))
+#obs.add(ObserverOutput3D(OutputName))
+
+# output
+t = TextOutput('test.txt')
+t.printHeader()
+obs.onDetection(t)
 
 # source and observer parameters
-radius=100.*Mpc
-origin=Vector3d(50.,50.,50.)*Mpc
-position=Vector3d(60,50,50)*Mpc
 source = Source()
-source.addProperty(SourcePosition(position))
-source.addProperty(SourceIsotropicEmission())
+source.add(SourcePosition(obsPosition))
+source.add(SourceIsotropicEmission())
+source.add(SourceParticleType(nucleusId(1, 1)))
+source.add(SourceEnergy(1e20 * eV))
+
 
 # module setup
 m = ModuleList()
-m.add(DeflectionCK(bField,1e-2,100*kpc,1*Mpc))
-m.add(LargeObserverSphere(origin,radius,'Detected','',True))
-m.add(ConditionalOutput('TEST-output.txt','Detected'))
-m.add(PeriodicBox(origin,Vector3d(200*Mpc)))
-
-# spectrum and composition
-minRigidity=1.*EeV
-maxRigidity=1000*EeV
-spectralIndex=-1.
-composition=SourceComposition(minRigidity,maxRigidity,spectralIndex)
-composition.add(nucleusId(A,Z),1.)
-source.addProperty(composition)
+m.add(DeflectionCK(bField, 1e-2, 100 * kpc, 1 * Mpc))
+m.add(PeriodicBox(boxOrigin, boxSize))
+m.add(obs)
 
 # run
 m.showModules()
 m.setShowProgress(True)
-recursive=True
-m.run(source,N,recursive)
+m.run(source, N, True)
 
 
