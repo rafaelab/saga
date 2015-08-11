@@ -5,7 +5,7 @@
 
 namespace saga{
 
-const int maxNumThreads = 2;
+const int maxNumThreads = 256;
 int threadID;
 sqlite3 *dbarr[maxNumThreads];    
 sqlite3 *dbsing;    
@@ -157,12 +157,11 @@ std::vector<std::vector<std::string> > SQLiteDB::query(char* queryString)
                 }
             }
             sqlite3_finalize(statement);
-            // std::cout << "query: " << queryString << " at thread " << threadID << std::endl;
         }
         std::string error = sqlite3_errmsg(dbarr[threadID]);
     #endif
 
-	if(error != "not an error")  std::cout << queryString << " " << error << std::endl;
+	// if(error != "not an error")  std::cout << queryString << " " << error << std::endl;
 	
 	return results;  
 }
