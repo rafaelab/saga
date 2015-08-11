@@ -66,7 +66,6 @@ void AMRgrid::setMinCellSize(int nLevels)
 std::vector<AMRcell> AMRgrid::getCellsRegion(double xmin, double xmax, double ymin, double ymax, double zmin, double zmax)
 {
     char query[512];
-    if (xmin > xmax)
     sprintf(query, "SELECT * FROM Cell_tree WHERE maxX >= %lf AND minX <= %lf AND maxY >= %lf AND minY <= %lf AND maxZ >= %lf AND minZ <= %lf;", xmin, xmax, ymin, ymax, zmin, zmax);
 
     std::vector<std::vector<std::string> > queryResults = DB->query(query);
@@ -95,7 +94,7 @@ std::vector<AMRcell>  AMRgrid::getNearestNeighbors(double x, double y, double z)
     double ymax = y + prefactor * minCellSize;
     double zmin = z - prefactor * minCellSize;
     double zmax = z + prefactor * minCellSize;
-    
+
    return getCellsRegion(xmin, xmax, ymin, ymax, zmin, zmax);
 }
 
@@ -185,6 +184,7 @@ LocalProperties AMRgrid::getLocalProperties(double x, double y, double z)
 
     char query[512];
     AMRcell cell = selectNearestNeighbor(x, y, z);
+    //std::cout << "cell index: " << cell.getCellIndex() << std::endl;
     sprintf(query, "SELECT * FROM Cell WHERE rowid = %i;", cell.getCellIndex());
     std::vector<std::vector<std::string> > queryResults = DB->query(query);
 
