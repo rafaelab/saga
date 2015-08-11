@@ -30,6 +30,7 @@ SQLiteDB::SQLiteDB()
     #ifndef _OPENMP 
         std::cout << "SAGA is running without OpenMP. Recompile the code including this option for better performance." << std::endl;
     #else
+        // sqlite3_config(SQLITE_CONFIG_MULTITHREAD);
         // int n = omp_get_num_threads();
         int n = atoi(getenv("OMP_NUM_THREADS"));
         if (n != maxNumThreads)
@@ -57,12 +58,16 @@ bool SQLiteDB::open(std::string filename)
         fileRet = sqlite3_open(filename.c_str(), &dbsing);
     #else
         // opening connections with the database
+        //int threadID;
         #pragma omp parallel private(fileRet,threadID) shared(filename, dbarr) default(none)
         {
             threadID = omp_get_thread_num();
             fileRet = sqlite3_open_v2(filename.c_str(), &dbarr[threadID], SQLITE_OPEN_READONLY, NULL);
+            // printf("id %i / tot %i\n", threadID+1, omp_get_num_threads());
         }
     #endif
+           // std::cout << "threadID " << threadID << std::endl;
+
     if(fileRet == 0) {
         std::cout << "Database successfully opened." << std::endl;
         return true;
@@ -94,9 +99,10 @@ bool SQLiteDB::close()
 
     if(fileRet==0)
         return true;
-    else
-            throw std::runtime_error("Failed to close the SQL database.");
+    else {
+        throw std::runtime_error("Failed to close the SQL database.");
         return false;
+    }
 } 
 
 /*********************************************************************************************************/ 
@@ -157,6 +163,7 @@ std::vector<std::vector<std::string> > SQLiteDB::query(char* queryString)
                 }
             }
             sqlite3_finalize(statement);
+            // std::cout << "query: " << queryString << " at thread " << threadID << std::endl;
         }
         std::string error = sqlite3_errmsg(dbarr[threadID]);
     #endif
