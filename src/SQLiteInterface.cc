@@ -5,7 +5,7 @@
 
 namespace saga{
 
-const int maxNumThreads = 256;
+const int maxNumThreads = 2;
 int threadID;
 sqlite3 *dbarr[maxNumThreads];    
 sqlite3 *dbsing;    
@@ -57,17 +57,12 @@ bool SQLiteDB::open(std::string filename)
         fileRet = sqlite3_open(filename.c_str(), &dbsing);
     #else
         // opening connections with the database
-        //int threadID;
         #pragma omp parallel private(fileRet,threadID) shared(filename, dbarr) default(none)
         {
             threadID = omp_get_thread_num();
-            fileRet = sqlite3_open_v2(filename.c_str(), &dbarr[threadID], SQLITE_OPEN_READONLY | SQLITE_OPEN_NOMUTEX, NULL);
-        
-            // printf("id %i / tot %i\n", threadID+1, omp_get_num_threads());
+            fileRet = sqlite3_open_v2(filename.c_str(), &dbarr[threadID], SQLITE_OPEN_READONLY, NULL);
         }
     #endif
-           // std::cout << "threadID " << threadID << std::endl;
-
     if(fileRet == 0) {
         std::cout << "Database successfully opened." << std::endl;
         return true;
