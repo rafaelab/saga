@@ -11,7 +11,7 @@
 #include <cmath>
 #include <stdexcept>
 
-#include "sqlite3.h"
+#include "sqlite3/sqlite3.h"
 #include "saga/AMRcell.h"
 #include "saga/LocalProperties.h"
 #include "saga/SQLiteInterface.h"

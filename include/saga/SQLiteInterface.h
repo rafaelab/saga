@@ -8,7 +8,7 @@
 #include <iostream>
 #include <stdexcept>
 
-#include "sqlite3.h"
+#include "sqlite3/sqlite3.h"
 
 #ifdef _OPENMP
     #include "omp.h"
