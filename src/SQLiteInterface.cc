@@ -28,14 +28,14 @@ SQLiteDB::SQLiteDB()
 {
 
     #ifndef _OPENMP 
-        std::cout << "SAGA is running without OpenMP. Recompile the code including this option for better performance." << std::endl;
+        std::cout << " " << std::endl;
     #else
         // sqlite3_config(SQLITE_CONFIG_MULTITHREAD);
         // int n = omp_get_num_threads();
         int n = atoi(getenv("OMP_NUM_THREADS"));
         if (n != maxNumThreads)
             omp_set_num_threads(n);
-        std::cout << "SAGA is running with OpenMP. Number of threads: " << n << " ." << std::endl;
+        std::cout << " " << std::endl;
     #endif
 
     sqlite3_enable_shared_cache(1); 
