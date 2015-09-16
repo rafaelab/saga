@@ -29,22 +29,6 @@ using std::ptrdiff_t;
 #include "saga/MagneticField.h"
 %}
 
-%exception
-{
-	try
-	{
-		$action
-	}
-	catch (const std::exception& e) {
-		SWIG_exception(SWIG_RuntimeError, e.what());
-	}
-	catch( Swig::DirectorException &e ) {
-		PyErr_Print();
-		SWIG_exception(SWIG_RuntimeError, e.getMessage());
-	} catch (...) {
-		SWIG_exception(SWIG_RuntimeError, "unknown exception");
-	}
-}
 
 %feature("ref") saga::Referenced "$this->addReference();"
 %feature("unref") saga::Referenced "$this->removeReference();"
