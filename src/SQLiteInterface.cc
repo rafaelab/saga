@@ -1,4 +1,6 @@
 #include <cstdlib>
+#include <unistd.h>
+#include <algorithm>
 
 #include "saga/SQLiteInterface.h"
 
@@ -26,20 +28,17 @@ static int callback(void *NotUsed, int argc, char **argv, char **azColName)
 //
 SQLiteDB::SQLiteDB()
 {
-
-    #ifndef _OPENMP 
-        std::cout << " " << std::endl;
-    #else
-        // sqlite3_config(SQLITE_CONFIG_MULTITHREAD);
-        // int n = omp_get_num_threads();
-        int n = atoi(getenv("OMP_NUM_THREADS"));
-        if (n != maxNumThreads)
-            omp_set_num_threads(n);
-        std::cout << " " << std::endl;
+    int n = atoi(getenv("OMP_NUM_THREADS"));
+    #ifdef _OPENMP 
+        if (n > 1)
+            omp_set_num_threads(std::min(maxNumThreads, n));
+        else
+            omp_set_num_threads(1);
     #endif
 
+    // sqlite3_config(SQLITE_CONFIG_SERIALIZED);
+    sqlite3_config(SQLITE_CONFIG_MULTITHREAD);
     sqlite3_enable_shared_cache(1); 
-
 }
 
 SQLiteDB::~SQLiteDB()
@@ -58,15 +57,13 @@ bool SQLiteDB::open(std::string filename)
         fileRet = sqlite3_open(filename.c_str(), &dbsing);
     #else
         // opening connections with the database
-        //int threadID;
         #pragma omp parallel private(fileRet,threadID) shared(filename, dbarr) default(none)
         {
             threadID = omp_get_thread_num();
-            fileRet = sqlite3_open_v2(filename.c_str(), &dbarr[threadID], SQLITE_OPEN_READONLY, NULL);
-            // printf("id %i / tot %i\n", threadID+1, omp_get_num_threads());
+            fileRet = sqlite3_open_v2(filename.c_str(), &dbarr[threadID], SQLITE_OPEN_READONLY , NULL);
+            // fileRet = sqlite3_open_v2(filename.c_str(), &dbarr[threadID], SQLITE_OPEN_READONLY | SQLITE_OPEN_NOMUTEX , NULL);
         }
     #endif
-           // std::cout << "threadID " << threadID << std::endl;
 
     if(fileRet == 0) {
         std::cout << "Database successfully opened." << std::endl;
@@ -88,11 +85,10 @@ bool SQLiteDB::close()
     #ifndef _OPENMP
         fileRet = sqlite3_close(dbsing);
     #else
-        //int threadID;
         // closing connections to the database
         #pragma omp parallel private(threadID,fileRet) shared(dbarr) default(none)
         {
-            threadID = omp_get_thread_num();
+            threadID = omp_get_thread_num();        
             fileRet = sqlite3_close(dbarr[threadID]);
         }
     #endif
@@ -115,15 +111,15 @@ bool SQLiteDB::close()
 std::vector<std::vector<std::string> > SQLiteDB::query(char* queryString)
 {
 
-	sqlite3_stmt *statement;
-	std::vector<std::vector<std::string> > results;
+    sqlite3_stmt *statement;
+    std::vector<std::vector<std::string> > results;
 
     // single thread
     #ifndef _OPENMP
         if(sqlite3_prepare_v2(dbsing, queryString, -1, &statement, 0) == SQLITE_OK){
             int cols = sqlite3_column_count(statement);
             int result = 0;
-            while(true){
+            while(true) {
                 result = sqlite3_step(statement);
                 if(result == SQLITE_ROW){
                     std::vector<std::string> values;
@@ -131,7 +127,6 @@ std::vector<std::vector<std::string> > SQLiteDB::query(char* queryString)
                         char *charPtr = (char*)sqlite3_column_text(statement, col);
                         std::string str = charPtr;
                         values.push_back(str);
-                        //std::cout << str << std::endl;
                     }
                     results.push_back(values);
                 } else {
@@ -144,13 +139,21 @@ std::vector<std::vector<std::string> > SQLiteDB::query(char* queryString)
 
     // multiple threads
     #else
+        threadID = omp_get_thread_num();
+        int accessCounts = 0;
+        int accessCountsTolerance = 50;
         if(sqlite3_prepare_v2(dbarr[threadID], queryString, -1, &statement, 0) == SQLITE_OK){
             int cols = sqlite3_column_count(statement);
             int result = 0;
             char *charPtr;
-            while(true){
+            do {
                 result = sqlite3_step(statement);
-                if(result == SQLITE_ROW){
+                // lock to avoid thread conflict
+                if (result == SQLITE_LOCKED || result == SQLITE_BUSY) { 
+                    usleep(1000);
+                    // printf("threadID: %i \t\t sleeping... \t\t access counts %i \n", threadID, accessCounts);
+                } 
+                if (result == SQLITE_ROW){
                     std::vector<std::string> values;
                     for(int col = 0; col < cols; col++){
                         char *charPtr = (char*)sqlite3_column_text(statement, col);
@@ -158,19 +161,15 @@ std::vector<std::vector<std::string> > SQLiteDB::query(char* queryString)
                         values.push_back(str);
                     }
                     results.push_back(values);
-                } else {
-                    break;   
-                }
-            }
+                } 
+                accessCounts++;
+            } while (accessCounts < accessCountsTolerance && (result == SQLITE_LOCKED || result == SQLITE_BUSY));
             sqlite3_finalize(statement);
-            // std::cout << "query: " << queryString << " at thread " << threadID << std::endl;
         }
         std::string error = sqlite3_errmsg(dbarr[threadID]);
     #endif
-
-	// if(error != "not an error")  std::cout << queryString << " " << error << std::endl;
-	
-	return results;  
+    
+    return results;  
 }
 
 /*********************************************************************************************************/ 
