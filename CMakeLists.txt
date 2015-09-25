@@ -3,9 +3,8 @@ project(SAGA C CXX)
 
 set(CMAKE_MACOSX_RPATH 1)
 
-
-set(CMAKE_C_FLAGS " -O3  -ldl -lpthread -fPIC -D_FILE_OFFSET_BITS=64 ${CMAKE_C_FLAGS}")
-set(CMAKE_CXX_FLAGS " -O3 -ldl -lpthread -fPIC -D_FILE_OFFSET_BITS=64 ${CMAKE_CXX_FLAGS}")
+set(CMAKE_C_FLAGS " -O3  -ldl -lpthread  -fPIC -D_FILE_OFFSET_BITS=64 ${CMAKE_C_FLAGS}")
+set(CMAKE_CXX_FLAGS " -O3 -ldl -lpthread -D_FILE_OFFSET_BITS=64 ${CMAKE_C_FLAGS} -flat_namespace -undefined suppress ${CMAKE_CXX_FLAGS}")
 if(CMAKE_COMPILER_IS_GNUCC)
        set(CMAKE_CXX_FLAGS " ${CMAKE_CXX_FLAGS}")
 endif(CMAKE_COMPILER_IS_GNUCC)
@@ -37,36 +36,30 @@ endif(ENABLE_OPENMP)
 # SQLite3
 # ----------------------------------------------------------------------------
 
-include_directories(include/sqlite3)
-add_library(sagaSQLite3 SHARED src/sqlite3.c include/sqlite3/sqlite3.h include/sqlite3/sqlite3ext.h)
-add_executable(sagaSQLite src/sqlite3.c src/shell.c include/sqlite3/sqlite3.h include/sqlite3/sqlite3ext.h)
-set_target_properties(sagaSQLite PROPERTIES OUTPUT_NAME sagaSQLite3)
+include_directories(include)
+add_library(saga-sqlite-lib SHARED src/sqlite3.c include/sqlite3/sqlite3.h include/sqlite3/sqlite3ext.h)
+add_executable(saga-sqlite src/sqlite3.c src/shell.c include/sqlite3/sqlite3.h include/sqlite3/sqlite3ext.h)
+set_target_properties(saga-sqlite PROPERTIES OUTPUT_NAME "saga-sqlite")
 
 add_definitions(-DSQLITE_ENABLE_RTREE)
 add_definitions(-DSQLITE_THREADSAFE=2)
 
 install(FILES include/sqlite3/sqlite3.h include/sqlite3/sqlite3ext.h DESTINATION include)
-install(TARGETS sagaSQLite3 LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)
-install(TARGETS sagaSQLite RUNTIME DESTINATION bin)
+install(TARGETS saga-sqlite-lib LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)
+install(TARGETS saga-sqlite RUNTIME DESTINATION bin)
 
 
 # ----------------------------------------------------------------------------
 # SAGA
 # ----------------------------------------------------------------------------
 include_directories(include)
-add_library(saga-lib SHARED src/AMRgrid.cc src/AMRcell.cc src/LocalProperties.cc src/SQLiteInterface.cc src/MagneticField.cc src/sqlite3.c)
+add_library(saga-lib SHARED src/AMRgrid.cc src/AMRcell.cc src/LocalProperties.cc src/SQLiteInterface.cc src/MagneticField.cc)
 set_target_properties(saga-lib PROPERTIES OUTPUT_NAME "saga")
 
 install(TARGETS saga-lib DESTINATION lib)
 install(DIRECTORY include/ DESTINATION include FILES_MATCHING PATTERN "*.h")
 
-set(CMAKE_CXX_FLAGS " -O3 -L${CMAKE_INSTALL_PREFIX} ${CMAKE_CXX_FLAGS}")
-
-set(SAGA_PREFIX ${CMAKE_INSTALL_PREFIX})
-set(SAGA_LIBRARY ${CMAKE_INSTALL_PREFIX}/lib/libsaga.a)
-
-set(SAGA_PREFIX ${CMAKE_SOURCE_DIR})
-set(SAGA_LIBRARY ${CMAKE_BINARY_DIR}/libSAGA.a)
+target_link_libraries(saga-lib saga-sqlite-lib)
 
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
