@@ -1,10 +1,7 @@
 SAGA
 ========
 
-author: Rafael Alves Batista
-
-email: rafael.alvesbatista [at] physics.ox.ac.uk
-
+NOTE: This code has been discontinued.
 
 SAGA ([S]QLite [A]MR [G]rid [A]pplication) is a simple code to allow [CRPropa 3](https://github.com/CRPropa/CRPropa3) and [GRPropa] (https://github.com/rafaelab/GRPropa) to read magnetohydrodynamical simulations of the cosmic web obtained with the [RAMSES](http://magnet.ens.fr/?ramses-mhd) code.
 
@@ -13,3 +10,8 @@ Reading a full MHD simulation is memory and time consuming. Therefore, we conver
 For information on how to install and use the code, see the [wiki](https://github.com/rafaelab/saga/wiki).
 
 This code is still being tested. I do not assume responsability for the results obtained with it. I recommend thorough tests before publishing any scientific results obtained using SAGA.
+
+
+
+email: rafael.alvesbatista [at] physics.ox.ac.uk
+
